@@ -28,7 +28,7 @@ describe('TsMorphMetadataProvider', () => {
 
   test('should load entities based on .d.ts files', async () => {
     const orm = await MikroORM.init({
-      entitiesDirs: ['./entities-compiled'],
+      entities: ['./entities-compiled'],
       tsNode: false,
       baseDir: __dirname,
       clientUrl: 'mongodb://localhost:27017,localhost:27018,localhost:27019/mikro-orm-test?replicaSet=rs0',
@@ -44,7 +44,7 @@ describe('TsMorphMetadataProvider', () => {
 
   test('should load entities', async () => {
     const orm = await MikroORM.init<MongoDriver>({
-      entitiesDirs: ['entities'],
+      entities: ['entities'],
       baseDir: __dirname,
       clientUrl: 'mongodb://localhost:27017,localhost:27018,localhost:27019/mikro-orm-test?replicaSet=rs0',
       type: 'mongo',

@@ -1,4 +1,4 @@
-import { Arguments, CommandModule } from 'yargs';
+import { CommandModule } from 'yargs';
 import chalk from 'chalk';
 
 import { CLIHelper } from '../CLIHelper';
@@ -12,7 +12,7 @@ export class DebugCommand implements CommandModule {
   /**
    * @inheritdoc
    */
-  async handler(args: Arguments) {
+  async handler() {
     CLIHelper.dump(`Current ${chalk.cyan('MikroORM')} CLI configuration`);
     await CLIHelper.dumpDependencies();
     const settings = await ConfigurationLoader.getSettings();
@@ -32,9 +32,6 @@ export class DebugCommand implements CommandModule {
 
       if (length > 0) {
         CLIHelper.dump(` - will use \`entities\` array (contains ${length} items)`);
-      } else if (config.get('entitiesDirs', []).length > 0) {
-        CLIHelper.dump(' - will use `entitiesDirs` paths:');
-        await DebugCommand.checkPaths(config.get('entitiesDirs'), 'red', config.get('baseDir'), true);
       }
     } catch (e) {
       CLIHelper.dump(`- configuration ${chalk.red('not found')} ${chalk.red(`(${e.message})`)}`);

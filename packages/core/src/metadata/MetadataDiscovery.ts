@@ -66,22 +66,21 @@ export class MetadataDiscovery {
       throw new Error(`[requireEntitiesArray] Explicit list of entities is required, please use the 'entities' option.`);
     }
 
-    if (this.config.get('entities').length > 0) {
-      await Utils.runSerial(this.config.get('entities'), entity => this.discoverEntity(entity));
-    } else if (preferTsNode && this.config.get('tsNode', Utils.detectTsNode())) {
-      await Utils.runSerial(this.config.get('entitiesDirsTs'), dir => this.discoverDirectory(dir));
-    } else {
-      await Utils.runSerial(this.config.get('entitiesDirs'), dir => this.discoverDirectory(dir));
-    }
+    const key = (preferTsNode && this.config.get('tsNode', Utils.detectTsNode())) ? 'entitiesTs' : 'entities';
+    const paths = this.config.get(key).filter(item => Utils.isString(item)) as string[];
+    const refs = this.config.get(key).filter(item => !Utils.isString(item)) as Constructor<AnyEntity>[];
 
+    await this.discoverDirectories(paths);
+    await Utils.runSerial(refs, entity => this.discoverEntity(entity));
     this.validator.validateDiscovered(this.discovered, this.config.get('discovery').warnWhenNoEntities!);
 
     return this.discovered;
   }
 
-  private async discoverDirectory(basePath: string): Promise<void> {
-    const files = await globby(Utils.normalizePath(basePath, '*'), { cwd: Utils.normalizePath(this.config.get('baseDir')) });
-    this.logger.log('discovery', `- processing ${chalk.cyan(files.length)} files from directory ${chalk.cyan(basePath)}`);
+  private async discoverDirectories(paths: string[]): Promise<void> {
+    paths = paths.map(path => Utils.normalizePath(path));
+    const files = await globby(paths, { cwd: Utils.normalizePath(this.config.get('baseDir')) });
+    this.logger.log('discovery', `- processing ${chalk.cyan(files.length)} files`);
     const found: [ObjectConstructor, string][] = [];
 
     for (const filepath of files) {
