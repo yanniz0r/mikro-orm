@@ -9,6 +9,26 @@ import { JoinOptions } from '../typings';
 
 export class QueryBuilderHelper {
 
+  static readonly GROUP_OPERATORS = {
+    $and: 'and',
+    $or: 'or',
+  };
+
+  static readonly OPERATORS = {
+    $eq: '=',
+    $in: 'in',
+    $nin: 'not in',
+    $gt: '>',
+    $gte: '>=',
+    $lt: '<',
+    $lte: '<=',
+    $ne: '!=',
+    $not: 'not',
+    $like: 'like',
+    $fulltext: 'fulltext',
+    $re: 'regexp',
+  };
+
   constructor(private readonly entityName: string,
               private readonly alias: string,
               private readonly aliasMap: Dictionary<string>,
@@ -328,7 +348,13 @@ export class QueryBuilderHelper {
       return void qb[m](this.knex.raw(`(${this.subQueries[key]})`), replacement, value[op]);
     }
 
-    qb[m](this.mapper(key, type), replacement, value[op]);
+    // Full text queries aren't usually a simple operator, they can look like
+    // SELECT column::tsvector @@ 'something'::tsquery;
+    if (op === '$fulltext') {
+      qb[m](this.knex.raw(this.platform.getFullTextWhereClause(), [key, value[op]]));
+    } else {
+      qb[m](this.mapper(key, type), replacement, value[op]);
+    }
   }
 
   private getOperatorReplacement(op: string, value: Dictionary): string {

@@ -16,4 +16,8 @@ export class MySqlPlatform extends AbstractSqlPlatform {
     return `${this.quoteIdentifier(a)}->'$.${b}'`;
   }
 
+  getFullTextWhereClause(): string {
+    return `match(?) against ('?' in natural language mode)`;
+  }
+
 }

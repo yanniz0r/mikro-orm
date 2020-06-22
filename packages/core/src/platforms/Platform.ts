@@ -105,6 +105,10 @@ export abstract class Platform {
     return 'time' + (length ? `(${length})` : '');
   }
 
+  getFullTextWhereClause(): string {
+    return `? match '?'`;
+  }
+
   getRegExpOperator(): string {
     return 'regexp';
   }

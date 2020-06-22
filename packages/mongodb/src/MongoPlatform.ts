@@ -47,4 +47,8 @@ export class MongoPlatform extends Platform {
     return values as unknown as string;
   }
 
+  getFullTextWhereClause(): string {
+    throw new Error('Full text search is not yet supported on Mongo');
+  }
+
 }

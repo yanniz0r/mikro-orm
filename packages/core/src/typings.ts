@@ -49,6 +49,7 @@ export type OperatorMap<T> = {
   $lt?: ExpandScalar<T>;
   $lte?: ExpandScalar<T>;
   $like?: string;
+  $fulltext?: string;
   $re?: string;
   $ilike?: string;
   $overlap?: string[];

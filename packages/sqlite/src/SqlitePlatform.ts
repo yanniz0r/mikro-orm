@@ -65,4 +65,8 @@ export class SqlitePlatform extends AbstractSqlPlatform {
     return escape(value, true, this.timezone);
   }
 
+  getFullTextWhereClause(): string {
+    return `? match '?'`;
+  }
+
 }
