@@ -4,6 +4,7 @@ import { Constructor, Dictionary, EntityProperty, IPrimaryKey, Primary, ISchemaG
 import { ExceptionConverter } from './ExceptionConverter';
 import { EntityManager } from '../EntityManager';
 import { Configuration } from '../utils/Configuration';
+import Knex from 'knex';
 
 export abstract class Platform {
 
@@ -106,8 +107,10 @@ export abstract class Platform {
   }
 
   getFullTextWhereClause(): string {
-    return `? match '?'`;
+    return `:column: match :query`;
   }
+
+  addFullTextIndex(table: Knex.CreateTableBuilder, index: { name?: string | boolean; properties: string | string[]; type?: string }) {}
 
   getRegExpOperator(): string {
     return 'regexp';

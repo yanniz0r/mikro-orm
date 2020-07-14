@@ -66,7 +66,7 @@ export class SqlitePlatform extends AbstractSqlPlatform {
   }
 
   getFullTextWhereClause(): string {
-    return `? match '?'`;
+    return `:table: match :column:::query`;
   }
 
 }

@@ -238,6 +238,21 @@ export class SchemaGenerator {
         table.comment(meta.comment);
       }
 
+      const createIndex = (index: { name?: string | boolean; properties: string | string[]; type?: string }, unique: boolean) => {
+        const properties = Utils.flatten(Utils.asArray(index.properties).map(prop => meta.properties[prop].fieldNames));
+
+        const name = Utils.isString(index.name) ? index.name : this.helper.getIndexName(meta.collection, properties, unique ? 'unique' : 'index');
+
+        if (unique) {
+          table.unique(properties, name);
+        } else if (index.type === 'fulltext') {
+          // Full text indexes are platform specific.
+          this.platform.addFullTextIndex(table, index);
+        } else {
+          table.index(properties, name, index.type);
+        }
+      };
+
       this.helper.finalizeTable(table, this.config.get('charset'));
     });
   }

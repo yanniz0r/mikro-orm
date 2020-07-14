@@ -77,6 +77,7 @@ export class PostgreSqlPlatform extends AbstractSqlPlatform {
   }
 
   getFullTextWhereClause(): string {
-    return `? @@ '?'`;
+    return `:column: @@ :query`;
   }
+
 }

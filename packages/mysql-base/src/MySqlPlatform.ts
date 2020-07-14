@@ -17,7 +17,7 @@ export class MySqlPlatform extends AbstractSqlPlatform {
   }
 
   getFullTextWhereClause(): string {
-    return `match(?) against ('?' in natural language mode)`;
+    return `match(:column:) against (:query)`;
   }
 
 }
